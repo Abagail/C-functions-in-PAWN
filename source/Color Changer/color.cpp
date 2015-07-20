@@ -82,6 +82,7 @@ cell AMX_NATIVE_CALL getDirectory(AMX* amx, cell* params)
 		cell* return_str;
 		amx_GetAddr(amx, params[1], &return_str);
 		amx_SetString(return_str, cwd, 0, 0, 1024);
+		return 1;
 	}
 	else return 0;
 }
@@ -103,7 +104,7 @@ cell AMX_NATIVE_CALL strcopy(AMX* amx, cell* params)
 
 		char* text = new char[len];
 		amx_GetString(text, addr, 0, len);
-
+		
 		cell* return_str;
 		amx_GetAddr(amx, params[2], &return_str);
 		amx_SetString(return_str, text, 0, 0, 1024);
@@ -135,7 +136,7 @@ cell AMX_NATIVE_CALL printfEx(AMX* amx, cell* params)
 		SetConsoleTextAttribute(hCon, params[2]);
 
 		logprintf(text);
-		SetConsoleTextAttribute(hCon, 14);
+		SetConsoleTextAttribute(hCon, 7);
 		delete[] text;
 	}
 
@@ -144,26 +145,8 @@ cell AMX_NATIVE_CALL printfEx(AMX* amx, cell* params)
 
 cell AMX_NATIVE_CALL setTextColor(AMX* amx, cell* params)
 {
-	int
-		len = NULL,
-		ret = NULL;
-
-	cell *addr = NULL;
-
-	amx_GetAddr(amx, params[1], &addr);
-	amx_StrLen(addr, &len);
-
-	if (len)
-	{
-		len++;
-
-		char* text = new char[len];
-		amx_GetString(text, addr, 0, len);
-
-		HANDLE hCon = GetStdHandle(STD_OUTPUT_HANDLE);;
-		SetConsoleTextAttribute(hCon, params[2]);
-	}
-
+	HANDLE hCon = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleTextAttribute(hCon, params[1]);
 	return 1;
 }
 
