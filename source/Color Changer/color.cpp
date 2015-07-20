@@ -1,10 +1,10 @@
 #include "SDK\amx\amx.h"
 #include "SDK\plugincommon.h"
-#include <stdlib.h>
 #include <errno.h>
 #include <direct.h>
 #include <stdio.h>
 #include <string.h>
+#include <windows.h>
 
 
 typedef void(*logprintf_t)(char* format, ...);
@@ -112,6 +112,61 @@ cell AMX_NATIVE_CALL strcopy(AMX* amx, cell* params)
 
 	return 1;
 }
+
+cell AMX_NATIVE_CALL printfEx(AMX* amx, cell* params)
+{
+	int
+		len = NULL,
+		ret = NULL;
+
+	cell *addr = NULL;
+
+	amx_GetAddr(amx, params[1], &addr);
+	amx_StrLen(addr, &len);
+
+	if (len)
+	{
+		len++;
+
+		char* text = new char[len];
+		amx_GetString(text, addr, 0, len);
+
+		HANDLE hCon = GetStdHandle(STD_OUTPUT_HANDLE);;
+		SetConsoleTextAttribute(hCon, params[2]);
+
+		logprintf(text);
+		SetConsoleTextAttribute(hCon, 14);
+		delete[] text;
+	}
+
+	return 1;
+}
+
+cell AMX_NATIVE_CALL setTextColor(AMX* amx, cell* params)
+{
+	int
+		len = NULL,
+		ret = NULL;
+
+	cell *addr = NULL;
+
+	amx_GetAddr(amx, params[1], &addr);
+	amx_StrLen(addr, &len);
+
+	if (len)
+	{
+		len++;
+
+		char* text = new char[len];
+		amx_GetString(text, addr, 0, len);
+
+		HANDLE hCon = GetStdHandle(STD_OUTPUT_HANDLE);;
+		SetConsoleTextAttribute(hCon, params[2]);
+	}
+
+	return 1;
+}
+
 PLUGIN_EXPORT unsigned int PLUGIN_CALL Supports()
 {
 	return SUPPORTS_VERSION | SUPPORTS_AMX_NATIVES;
@@ -137,7 +192,9 @@ AMX_NATIVE_INFO PluginNatives[] =
 	{ "systemEx", systemEx },
 	{ "getDirectory", getDirectory },
 	{ "cleanConsole", cleanConsole },
-	{ "strcopy", strcopy }
+	{ "strcopy", strcopy },
+	{ "printfEx", printfEx },
+	{ "setTextColor", setTextColor }
 };
 
 PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX *amx)
